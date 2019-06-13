@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  DeepRacer
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 180
+Resources:
+  RewardFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: reward/
+      Handler: app.lambda_handler
+      Runtime: python3.7
+      Layers:
+        - !Ref LibLayer   
+      Events:
+        Reward:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /reward
+            Method: get
+
+  LibLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: lib
+      CompatibleRuntimes:
+        - python3.7
+      LicenseInfo: 'Available under the MIT-0 license.'
+      RetentionPolicy: Delete  
+
+Outputs:
+  RewardFunctionApi:
+    Description: "API Gateway endpoint URL for Prod stage for Reward function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/reward/"
+  RewardFunction:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt RewardFunction.Arn
+  RewardFunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt RewardFunctionRole.Arn
