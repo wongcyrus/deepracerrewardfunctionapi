@@ -1,4 +1,6 @@
 import json
+import sys
+sys.path.append("/opt/") 
 from sympy import *
 from sympy.geometry import *
 
