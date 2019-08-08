@@ -1,2 +1,6 @@
 sympy
+Pillow
+numpy
 mpmath
+scikit-learn
+scipy

@@ -13,8 +13,9 @@ Resources:
       CodeUri: reward/
       Handler: app.lambda_handler
       Runtime: python3.7
+      MemorySize: 2048
       Layers:
-        - !Ref LibLayer   
+        - !Ref LibLayer  
       Events:
         Reward:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
