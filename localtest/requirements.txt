@@ -1,0 +1,6 @@
+sympy
+mpmath
+Pillow
+numpy
+sklearn
+matplotlib

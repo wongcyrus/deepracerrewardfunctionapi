@@ -16,7 +16,8 @@ from sklearn.linear_model import LinearRegression
 full_range = 500
 color_print_threshold = 100
 fail_reward = 2e-26
-max_steering_angle = 20
+minimum_reward = 1
+max_steering_angle = 30
 steering_granularity = 5
 
 max_speed = 8
@@ -38,8 +39,6 @@ def lambda_handler(event, context):
         circle.save('/tmp/circle.png')
 
         color_points = get_color_points(circle)
-        # color_points = [green_points]
-
         number_of_color_point = sum(map(len, color_points))
         print(number_of_color_point)
 
@@ -64,24 +63,31 @@ def lambda_handler(event, context):
         steering_ray = Ray(Point(full_range / 2, full_range / 2),
                            angle=math.radians(steering_angle))
         angle_diff = target_direction - params['steering_angle']
-        print("angle diff: " + str(angle_diff))
+
+        # Read input parameters
+        track_width = params['track_width']
 
         distance_reward = gaussian(perpendicular_distance, 0,
-                                   full_range / 4) * 1000
+                                   full_range / 4) * 10
         print("distance reward: " + str(distance_reward))
         steering_angle = params['steering_angle']
         color_ratio = get_color_ratio(color_points)
-        track_reward =  color_ratio[0] * get_red_reward(angle_diff, steering_angle) \
-                        + color_ratio[1] * get_green_reward(angle_diff, steering_angle) \
-                        + color_ratio[2] * get_blue_reward(angle_diff, steering_angle)
-        track_reward = track_reward * 10000000
+
+        print("angle diff: ", angle_diff)
+        print("steering angle: ", steering_angle)
+        print("color_ratio", color_ratio)
+
+        track_reward =  get_red_reward(angle_diff, steering_angle , color_ratio[0]) \
+                        + get_green_reward(angle_diff, steering_angle, color_ratio[1]) \
+                        + get_blue_reward(angle_diff, steering_angle, color_ratio[2])
+        track_reward = track_reward
         print("track reward:" + str(track_reward))
 
         speed_reward = params['speed']
         speed_reward = (speed_reward / max_speed * 100)
         print("speed reward:" + str(speed_reward))
 
-        reward = (distance_reward + track_reward) * speed_reward
+        reward = distance_reward + track_reward + speed_reward
 
         progress = params['progress']
         if progress > 70 and progress < 100:
@@ -152,31 +158,38 @@ def get_color_ratio(color_points):
     return list(map(lambda x: len(x) / number_of_color_point, color_points))
 
 
-def get_red_reward(angle_diff, steering_angle):
-    if angle_diff > 0:
+def get_red_reward(angle_diff, steering_angle, ratio):
+    # No turn right, and should be positive!
+    if steering_angle > (max_steering_angle / steering_granularity):
         return fail_reward
-    elif angle_diff < (max_steering_angle -
-                       max_steering_angle / steering_granularity):
-        return 1 / abs(angle_diff)
+    elif abs(angle_diff) < (max_steering_angle -
+                            max_steering_angle / steering_granularity):
+        red_award = (max_steering_angle / abs(angle_diff)) * ratio
+        print("red award: ", red_award)
+        return red_award
     else:
         return fail_reward
 
 
-def get_green_reward(angle_diff, steering_angle):
-    if abs(angle_diff) < (max_steering_angle -
+def get_green_reward(angle_diff, steering_angle, ratio):
+    if abs(angle_diff) > (max_steering_angle -
                           max_steering_angle / steering_granularity):
         return fail_reward
     else:
-        return (1 / (abs(steering_angle) + 2e-26)) * (1 / abs(angle_diff))
+        green_award = (max_steering_angle / abs(angle_diff)) * ratio
+        print("green award: ", green_award)
+        return green_award
 
 
-def get_blue_reward(angle_diff, steering_angle):
-    # No turn right
-    if steering_angle < -(2 * max_steering_angle / steering_granularity):
+def get_blue_reward(angle_diff, steering_angle, ratio):
+    # No turn right, and should be positive!
+    if steering_angle > (max_steering_angle / steering_granularity):
         return fail_reward
     elif angle_diff < (max_steering_angle -
                        max_steering_angle / steering_granularity):
-        return (1 / (abs(steering_angle) + 2e-26)) * (1 / abs(angle_diff))
+        blue_award = (max_steering_angle / abs(angle_diff)) * ratio
+        print("blue award: ", blue_award)
+        return blue_award
     else:
         return fail_reward
 
