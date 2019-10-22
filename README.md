@@ -1,7 +1,20 @@
-# DeepRacer
+# DeepRacer Reward API
 
-1. Run sudo ./get_layer_packages.sh for Python Library.
-2. Change the source bucket in deployment.sh.
-3. Run ./deployment.sh to create or update the API.
-4. Copy the reward.py as the DeepRacer Reward Function.
+
+The Project details please read [AWS DeepRacer Tips and Tricks: How to build a powerful rewards function with AWS Lambda and Photoshop](https://www.linkedin.com/pulse/aws-deepracer-tips-tricks-how-build-powerful-rewards-wong/).
+
+
+## Deploy witg Cloud9
+
+wget https://gist.githubusercontent.com/wongcyrus/8eaddcc155aec4cdb451178fb5cbc2b8/raw/f60a012b9165dc9b87fd67028ba8d065be40ed2e/install_sam_cli.sh
+
+chmod +x install_sam_cli.sh
+
+./install_sam_cli.sh
+
+sudo ./get_layer_packages.sh 
+
+./deployment.sh
+
+Now, you can copy the reward.py as the DeepRacer Reward Function.
 
