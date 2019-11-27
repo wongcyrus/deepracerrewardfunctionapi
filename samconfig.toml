@@ -3,6 +3,7 @@ version = 0.1
 [default.deploy]
 [default.deploy.parameters]
 stack_name = "deepracer-reward"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1mhzjm1gn6clf"
 s3_prefix = "deepracer-reward"
 region = "us-east-1"
 confirm_changeset = false

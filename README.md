@@ -25,6 +25,9 @@ git clone https://github.com/wongcyrus/deepracerrewardfunctionapi
 cd deepracerrewardfunctionapi
 
 sudo ./get_layer_packages.sh
+
+Create a new S3 bucket in us-east-1 and change "s3_bucket" in samconfig.toml.
+
 ./deployment.sh
 
 Now, you can copy the reward.py as your DeepRacer Reward Function.
