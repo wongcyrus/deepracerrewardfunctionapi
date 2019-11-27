@@ -25,6 +25,7 @@ git clone https://github.com/wongcyrus/deepracerrewardfunctionapi
 cd deepracerrewardfunctionapi
 
 sudo ./get_layer_packages.sh
+
 ./deployment.sh
 
 Now, you can copy the reward.py as your DeepRacer Reward Function.
